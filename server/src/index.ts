@@ -1,6 +1,6 @@
 import { createApp } from './app.js';
 import { config } from './config.js';
-import { openDb } from './db/index.js';
+import { bootstrapDatabase } from './db/bootstrap.js';
 import { logger } from './logger.js';
 import { startBackgroundRefresh } from './services/eventCache.js';
 import { initGoogle } from './services/googleCalendar.js';
@@ -11,7 +11,7 @@ import { googleStatus } from './services/googleCalendar.js';
 import { startPhotosRefresh } from './services/photos.js';
 import { startWeatherRefresh } from './services/weather.js';
 
-openDb();
+bootstrapDatabase();
 initGoogle();
 initGmail();
 startBackgroundRefresh();

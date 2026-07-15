@@ -8,7 +8,8 @@
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
     "test": "TZ=America/Chicago vitest run",
-    "migrate": "tsx src/db/migrate-cli.ts"
+    "migrate": "tsx src/db/migrate-cli.ts",
+    "bootstrap": "tsx src/db/bootstrap-cli.ts"
   },
   "dependencies": {
     "@canopy/shared": "*",
