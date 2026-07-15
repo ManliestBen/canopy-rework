@@ -6,6 +6,9 @@ import {
   type SettingsPatch,
 } from '@canopy/shared';
 import { useState } from 'react';
+import { BackupSettings } from '../components/BackupSettings';
+import { PinSettings } from '../components/PinSettings';
+import { UserManager } from '../components/UserManager';
 import { apiSend } from '../lib/api';
 import { settingsQuery, useSettings } from '../theme/ThemeProvider';
 
@@ -79,7 +82,7 @@ export function SettingsPage() {
         </div>
       </section>
 
-      <section className="panel" style={{ padding: 20 }}>
+      <section className="panel" style={{ padding: 20, marginBottom: 20 }}>
         <h2 style={{ marginTop: 0 }}>Household</h2>
         <NameField
           label="Family name (shown in the header)"
@@ -87,10 +90,30 @@ export function SettingsPage() {
           onSave={(familyName) => mutation.mutate({ familyName })}
         />
         <NameField
+          label="Location (for weather)"
+          value={settings.locationQuery}
+          onSave={(locationQuery) => mutation.mutate({ locationQuery })}
+        />
+        <NameField
           label="Device name"
           value={settings.deviceName}
           onSave={(deviceName) => mutation.mutate({ deviceName })}
         />
+      </section>
+
+      <section className="panel" style={{ padding: 20, marginBottom: 20 }}>
+        <h2 style={{ marginTop: 0 }}>Family members</h2>
+        <UserManager />
+      </section>
+
+      <section className="panel" style={{ padding: 20, marginBottom: 20 }}>
+        <h2 style={{ marginTop: 0 }}>Security</h2>
+        <PinSettings />
+      </section>
+
+      <section className="panel" style={{ padding: 20 }}>
+        <h2 style={{ marginTop: 0 }}>Backup</h2>
+        <BackupSettings />
       </section>
     </div>
   );

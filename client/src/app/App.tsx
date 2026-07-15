@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { Onboarding } from '../components/Onboarding';
+import { useSettings } from '../theme/ThemeProvider';
 import { CalendarPage } from '../pages/CalendarPage';
 import { ChoresPage } from '../pages/ChoresPage';
 import { ListsPage } from '../pages/ListsPage';
@@ -11,6 +13,10 @@ import { Header } from './Header';
 import { Rail } from './Rail';
 
 export function App() {
+  const settings = useSettings();
+  if (!settings.onboarded) {
+    return <Onboarding />;
+  }
   return (
     <div className="shell">
       <Rail />

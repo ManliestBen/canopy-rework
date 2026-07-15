@@ -9,8 +9,11 @@ import { ZodError } from 'zod';
 import { config } from './config.js';
 import { logger } from './logger.js';
 import { requireAuth } from './auth/middleware.js';
+import { authRouter } from './auth/routes.js';
+import { backupRouter } from './routes/backup.js';
 import { healthRouter } from './routes/health.js';
 import { settingsRouter } from './routes/settings.js';
+import { usersRouter } from './routes/users.js';
 
 export function createApp(): express.Express {
   const app = express();
@@ -47,11 +50,14 @@ export function createApp(): express.Express {
     return writeLimiter(req, res, next);
   });
 
-  // Health is unauthenticated (used by systemd/monitoring); everything
+  // Health and auth (status/login) are reachable pre-auth; everything
   // else under /api requires loopback or a session.
   app.use('/api/health', healthRouter);
+  app.use('/api/auth', authRouter);
   app.use('/api', requireAuth);
   app.use('/api/settings', settingsRouter);
+  app.use('/api/users', usersRouter);
+  app.use('/api/backup', backupRouter);
 
   // Static client (production build), SPA fallback.
   if (fs.existsSync(config.clientDist)) {
@@ -73,6 +79,12 @@ export function createApp(): express.Express {
         code: 'invalid_request',
         issues: err.issues.map((i) => ({ path: i.path.join('.'), message: i.message })),
       });
+      return;
+    }
+    // Services attach `status` for expected failures (404s etc.).
+    const status = (err as { status?: number }).status;
+    if (status && status >= 400 && status < 500) {
+      res.status(status).json({ error: (err as Error).message, code: 'request_failed' });
       return;
     }
     logger.error({ err, url: req.url, method: req.method }, 'unhandled error');

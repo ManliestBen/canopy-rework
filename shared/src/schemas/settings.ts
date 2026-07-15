@@ -25,6 +25,10 @@ export const SettingsSchema = z.object({
   themeMode: z.union([z.literal('system'), ThemeSchema]).default('skylight'),
   /** 0 = solid panels, 100 = maximum glass. Maps to --panel-alpha/--panel-blur. */
   transparency: z.number().int().min(0).max(100).default(35),
+  /** Free-text location for weather ("Traverse City, MI"). Geocoded in Phase 5. */
+  locationQuery: z.string().trim().max(100).default(''),
+  /** Set true when the first-run wizard completes. */
+  onboarded: z.boolean().default(false),
 });
 
 export type Settings = z.infer<typeof SettingsSchema>;
