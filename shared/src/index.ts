@@ -8,3 +8,4 @@ export * from './schemas/calendar';
 export * from './schedule';
 export * from './schemas/tasks';
 export * from './schemas/lists';
+export * from './schemas/weather';

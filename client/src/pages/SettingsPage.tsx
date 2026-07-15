@@ -92,7 +92,15 @@ export function SettingsPage() {
         <NameField
           label="Location (for weather)"
           value={settings.locationQuery}
-          onSave={(locationQuery) => mutation.mutate({ locationQuery })}
+          onSave={(locationQuery) => {
+            mutation.mutate(
+              { locationQuery },
+              {
+                // Kick a weather refresh so the header chip updates now.
+                onSuccess: () => void fetch('/api/weather/refresh', { method: 'POST' }),
+              },
+            );
+          }}
         />
         <NameField
           label="Device name"

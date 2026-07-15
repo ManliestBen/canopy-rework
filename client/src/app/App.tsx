@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { Onboarding } from '../components/Onboarding';
 import { useSettings } from '../theme/ThemeProvider';
 import { TasksPage } from '../features/household/TasksPage';
+import { WeatherPage } from '../features/weather/WeatherPage';
 import { CalendarPage } from '../pages/CalendarPage';
 import { ChoresPage } from '../pages/ChoresPage';
 import { ListsPage } from '../pages/ListsPage';
@@ -34,6 +35,7 @@ export function App() {
           <Route path="/lists" element={<ListsPage />} />
           <Route path="/sleep" element={<SleepPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/weather" element={<WeatherPage />} />
           <Route path="*" element={<Navigate to="/calendar" replace />} />
         </Routes>
       </main>

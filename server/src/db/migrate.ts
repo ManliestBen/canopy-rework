@@ -133,6 +133,15 @@ const MIGRATIONS: string[] = [
     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
   ) STRICT;
   `,
+
+  // 5 — generic last-good cache (weather now; future integrations too)
+  `
+  CREATE TABLE kv_cache (
+    key        TEXT PRIMARY KEY,
+    payload    TEXT NOT NULL,
+    fetched_at TEXT NOT NULL
+  ) STRICT;
+  `,
 ];
 
 export function migrate(db: Database.Database): void {

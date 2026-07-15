@@ -16,6 +16,7 @@ import { choresRouter, rewardsRouter } from './routes/chores.js';
 import { eventsRouter } from './routes/events.js';
 import { listsRouter, mealsRouter } from './routes/lists.js';
 import { tasksRouter } from './routes/tasks.js';
+import { weatherRouter } from './routes/weather.js';
 import { healthRouter } from './routes/health.js';
 import { settingsRouter } from './routes/settings.js';
 import { usersRouter } from './routes/users.js';
@@ -70,6 +71,7 @@ export function createApp(): express.Express {
   app.use('/api/rewards', rewardsRouter);
   app.use('/api/lists', listsRouter);
   app.use('/api/meals', mealsRouter);
+  app.use('/api/weather', weatherRouter);
 
   // Static client (production build), SPA fallback.
   if (fs.existsSync(config.clientDist)) {

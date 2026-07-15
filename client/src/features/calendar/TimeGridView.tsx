@@ -1,6 +1,7 @@
 import { formatKey, formatTime, type CalendarEvent, type DateKey } from '@canopy/shared';
 import { useEffect, useMemo, useRef } from 'react';
 import { useNow } from '../../hooks/useNow';
+import { useWeather } from '../weather/api';
 import { EventMemberDot } from './EventPill';
 import { layoutBanners, layoutDay, isBanner } from './layout';
 
@@ -8,6 +9,15 @@ const HOUR_PX = 56;
 
 function hourLabel(h: number): string {
   return new Date(2000, 0, 1, h).toLocaleTimeString([], { hour: 'numeric' });
+}
+
+function DayWeather({ day }: { day?: { emoji: string; min: number; max: number } }) {
+  if (!day) return null;
+  return (
+    <span className="dayhead-weather">
+      {day.emoji} {day.max}°/{day.min}°
+    </span>
+  );
 }
 
 /**
@@ -31,6 +41,7 @@ export function TimeGridView({
 }) {
   const now = useNow();
   const scroller = useRef<HTMLDivElement>(null);
+  const { data: weather } = useWeather();
 
   useEffect(() => {
     // Open at 7am so the school-morning window is visible.
@@ -73,6 +84,9 @@ export function TimeGridView({
               <span className="dayhead-meta">
                 {count === 0 ? ' ' : `${count} event${count === 1 ? '' : 's'}`}
               </span>
+              <DayWeather
+                day={weather?.daily.find((d) => d.dateKey === day)}
+              />
             </div>
           );
         })}
