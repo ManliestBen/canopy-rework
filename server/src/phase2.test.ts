@@ -175,7 +175,8 @@ describe('event cache', () => {
     const res = getEvents('2026-07-16', '2026-07-16');
     expect(res.events).toHaveLength(1);
     expect(res.calendars[0]!.status).toBe('error');
-    expect(res.calendars[0]!.error).toContain('ECONNREFUSED');
+    // Raw upstream detail (ECONNREFUSED) is logged, not reflected to clients.
+    expect(res.calendars[0]!.error).toBe('Could not refresh this calendar');
   });
 
   it('filters by day-key overlap, including multi-day spans', async () => {

@@ -149,12 +149,16 @@ export async function refreshCalendar(cal: CalendarSource): Promise<void> {
       .run(cal.id, JSON.stringify(events), fetchedAt);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
+    // Only errors we raised deliberately (safe wording, no internals) are
+    // shown to clients; upstream/network detail stays in the log.
+    const safe = (err as { safe?: boolean }).safe === true;
+    const clientMessage = safe ? message : 'Could not refresh this calendar';
     const existing = cache.get(cal.id);
     // Keep serving last-good events; just mark the failure.
     cache.set(cal.id, {
       events: existing?.events ?? [],
       fetchedAt: existing?.fetchedAt ?? null,
-      error: message,
+      error: clientMessage,
     });
     logger.warn({ calendarId: cal.id, err: message }, 'calendar refresh failed');
   }

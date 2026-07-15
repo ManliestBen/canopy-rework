@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { rrulestr } from 'rrule';
-import { parseIcsEvents } from './services/icsFeed.js';
+import { fetchIcsText, isPublicAddress, parseIcsEvents } from './services/icsFeed.js';
 
 // Tests run under TZ=America/Chicago (see server/package.json). The whole
 // point of these cases is that a recurring feed event keeps its wall-clock
@@ -164,5 +164,93 @@ describe('parseIcsEvents recurrence', () => {
     );
     const events = parseIcsEvents(text, WINDOW_START, WINDOW_END);
     expect(events.length).toBeLessThanOrEqual(1000);
+  });
+});
+
+describe('isPublicAddress', () => {
+  it('rejects private, loopback, and link-local addresses', () => {
+    for (const addr of [
+      '127.0.0.1',
+      '10.0.0.8',
+      '172.20.1.1',
+      '192.168.1.10',
+      '169.254.1.1',
+      '0.0.0.0',
+      '::1',
+      'fd00::1',
+      'fe80::1',
+      '::ffff:192.168.1.10',
+    ]) {
+      expect(isPublicAddress(addr), addr).toBe(false);
+    }
+  });
+
+  it('accepts public addresses', () => {
+    for (const addr of ['93.184.216.34', '2606:2800:220:1:248:1893:25c8:1946']) {
+      expect(isPublicAddress(addr), addr).toBe(true);
+    }
+  });
+});
+
+describe('fetchIcsText SSRF + size guards', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('rejects non-http(s) schemes without a network call', async () => {
+    const spy = vi.fn();
+    vi.stubGlobal('fetch', spy);
+    await expect(fetchIcsText('ftp://example.com/cal.ics')).rejects.toMatchObject({ status: 400 });
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('rejects loopback and private IP literals without a network call', async () => {
+    const spy = vi.fn();
+    vi.stubGlobal('fetch', spy);
+    for (const url of [
+      'http://localhost/cal.ics',
+      'http://127.0.0.1/cal.ics',
+      'http://192.168.1.1/cal.ics',
+      'http://[::1]/cal.ics',
+    ]) {
+      await expect(fetchIcsText(url)).rejects.toMatchObject({ status: 400 });
+    }
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  // Use a public IP literal so the guard skips DNS (keeps tests offline-safe).
+  const PUBLIC = 'https://93.184.216.34/cal.ics';
+
+  it('rejects a body that exceeds the size cap via content-length', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        new Response('BEGIN:VCALENDAR', {
+          status: 200,
+          headers: { 'content-length': String(6 * 1024 * 1024) },
+        }),
+      ),
+    );
+    await expect(fetchIcsText(PUBLIC)).rejects.toMatchObject({ message: 'Feed too large' });
+  });
+
+  it('re-validates redirect targets against the guard', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        new Response(null, { status: 302, headers: { location: 'http://127.0.0.1/x' } }),
+      ),
+    );
+    await expect(fetchIcsText(PUBLIC)).rejects.toMatchObject({ status: 400 });
+  });
+
+  it('stops after too many redirects', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        new Response(null, { status: 302, headers: { location: 'https://93.184.216.34/next' } }),
+      ),
+    );
+    await expect(fetchIcsText(PUBLIC)).rejects.toMatchObject({
+      message: 'Feed redirected too many times',
+    });
   });
 });
