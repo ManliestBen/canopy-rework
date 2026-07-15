@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { BackupSchema, type Backup } from '@canopy/shared';
+import { getDb } from '../db/index.js';
 import { getSettings, patchSettings } from '../services/settings.js';
-import { listUsers, replaceAllUsers } from '../services/users.js';
+import { listUsers, restoreUsers } from '../services/users.js';
 
 export const backupRouter = Router();
 
@@ -27,7 +28,11 @@ backupRouter.get('/', (_req, res) => {
 
 backupRouter.post('/restore', (req, res) => {
   const backup = BackupSchema.parse(req.body);
-  patchSettings(backup.settings);
-  replaceAllUsers(backup.users);
+  // One transaction: settings + users apply all-or-nothing (a partial
+  // restore would leave the panel in a confusing half-configured state).
+  getDb().transaction(() => {
+    patchSettings(backup.settings);
+    restoreUsers(backup.users);
+  })();
   res.json({ ok: true, restoredUsers: backup.users.length });
 });

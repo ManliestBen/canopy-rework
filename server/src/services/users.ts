@@ -84,15 +84,31 @@ export function deleteUser(id: string): void {
   }
 }
 
-export function replaceAllUsers(users: User[]): void {
+/**
+ * Restore users from a backup while preserving IDs. Users whose ID already
+ * exists are updated in place (so their ON DELETE CASCADE children — chores,
+ * chore completions, reward redemptions — survive the restore); only users
+ * absent from the backup are deleted (their cascade is intentional). Runs in
+ * one transaction; call it inside an outer transaction for an atomic restore.
+ */
+export function restoreUsers(users: User[]): void {
   const db = getDb();
-  const insert = db.prepare(
-    'INSERT INTO users (id, name, color, avatar, is_admin, sort_order) VALUES (?, ?, ?, ?, ?, ?)',
+  const upsert = db.prepare(
+    `INSERT INTO users (id, name, color, avatar, is_admin, sort_order)
+     VALUES (?, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET
+       name = excluded.name, color = excluded.color, avatar = excluded.avatar,
+       is_admin = excluded.is_admin, sort_order = excluded.sort_order`,
   );
   db.transaction(() => {
-    db.prepare('DELETE FROM users').run();
+    const keep = new Set(users.map((u) => u.id));
+    const existing = db.prepare('SELECT id FROM users').all() as { id: string }[];
+    const del = db.prepare('DELETE FROM users WHERE id = ?');
+    for (const row of existing) {
+      if (!keep.has(row.id)) del.run(row.id);
+    }
     for (const u of users) {
-      insert.run(u.id, u.name, u.color, u.avatar, u.isAdmin ? 1 : 0, u.sortOrder);
+      upsert.run(u.id, u.name, u.color, u.avatar, u.isAdmin ? 1 : 0, u.sortOrder);
     }
   })();
 }
