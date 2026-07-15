@@ -57,6 +57,16 @@ authRouter.post('/logout', (req, res) => {
   res.json({ ok: true });
 });
 
+/** Verify a PIN without creating a session (panel settings lock). */
+authRouter.post('/verify', loginLimiter, (req, res) => {
+  const { pin } = PinLoginSchema.parse(req.body);
+  if (!hasPin() || !verifyPin(pin)) {
+    res.status(401).json({ error: 'Wrong PIN', code: 'bad_pin' });
+    return;
+  }
+  res.json({ ok: true });
+});
+
 /**
  * Setting/changing the PIN requires being the panel (loopback) or
  * knowing the current PIN — so a guest's phone can't silently re-PIN

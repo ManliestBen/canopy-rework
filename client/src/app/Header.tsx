@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { MemberChip } from '../components/MemberChip';
+import { OfflineBadge } from '../components/OfflineBadge';
 import { TimerButton } from '../components/Timer';
 import { AnnounceButton } from '../features/announcements/Announcements';
 import { WeatherChip } from '../features/weather/WeatherChip';
@@ -20,6 +21,7 @@ export function Header() {
       </div>
       <div className="header-date">{format(now, 'EEEE, MMMM d')}</div>
       <div className="header-spacer" />
+      <OfflineBadge />
       <WeatherChip />
       <AnnounceButton />
       <TimerButton />

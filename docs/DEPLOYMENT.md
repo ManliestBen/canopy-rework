@@ -34,7 +34,7 @@ Wants=network-online.target
 User=pi
 WorkingDirectory=/home/pi/canopy
 EnvironmentFile=/home/pi/canopy/.env
-ExecStart=/usr/bin/node server/dist/index.js
+ExecStart=/usr/bin/npm run start
 Restart=always
 RestartSec=5
 

@@ -46,6 +46,11 @@ export const SettingsSchema = z.object({
   digestTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).default('06:45'),
   /** Comma-separated recipient addresses. */
   digestEmails: z.string().trim().max(500).default(''),
+
+  /** On-panel pop-up (and chime) before timed events. 0 = off. */
+  reminderMinutes: z.number().int().min(0).max(120).default(10),
+  /** Require the family PIN to open Settings on the panel itself. */
+  settingsLocked: z.boolean().default(false),
 });
 
 export type Settings = z.infer<typeof SettingsSchema>;

@@ -17,6 +17,10 @@
     "start": "npm run start --workspace server",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "migrate": "npm run migrate --workspace server"
+    "migrate": "npm run migrate --workspace server",
+    "e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
   }
 }

@@ -117,8 +117,39 @@ export function SettingsPage() {
       </section>
 
       <section className="panel" style={{ padding: 20, marginBottom: 20 }}>
+        <h2 style={{ marginTop: 0 }}>Reminders</h2>
+        <div className="field">
+          <label htmlFor="remind-min">
+            {settings.reminderMinutes === 0
+              ? 'Event reminders are off'
+              : `Pop up ${settings.reminderMinutes} minutes before events`}
+          </label>
+          <input
+            id="remind-min"
+            type="range"
+            min={0}
+            max={60}
+            step={5}
+            value={settings.reminderMinutes}
+            onChange={(e) => mutation.mutate({ reminderMinutes: Number(e.target.value) })}
+            style={{ minHeight: 'var(--touch-target)' }}
+          />
+        </div>
+      </section>
+
+      <section className="panel" style={{ padding: 20, marginBottom: 20 }}>
         <h2 style={{ marginTop: 0 }}>Security</h2>
         <PinSettings />
+        <div className="field" style={{ marginTop: 12 }}>
+          <label className="checkbox-row">
+            <input
+              type="checkbox"
+              checked={settings.settingsLocked}
+              onChange={(e) => mutation.mutate({ settingsLocked: e.target.checked })}
+            />
+            Require the PIN to open Settings on this panel
+          </label>
+        </div>
       </section>
 
       <section className="panel" style={{ padding: 20, marginBottom: 20 }}>

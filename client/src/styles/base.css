@@ -454,3 +454,92 @@ textarea {
   display: flex;
   margin-top: 24px;
 }
+
+/* ---- Offline badge & reminder toasts ---------------------------------- */
+.offline-badge {
+  background: color-mix(in srgb, var(--danger) 14%, var(--bg-panel));
+  color: var(--danger);
+  font-weight: 800;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  padding: 6px 12px;
+  white-space: nowrap;
+}
+
+.reminder-stack {
+  position: fixed;
+  top: 96px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 65;
+  width: min(380px, calc(100vw - 48px));
+}
+
+.reminder-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow-raised);
+}
+
+.reminder-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ---- Responsive / mobile pass ------------------------------------------ */
+@media (max-width: 760px) {
+  .header {
+    gap: 10px;
+    padding: 0 12px;
+  }
+
+  .header-date,
+  .header-members {
+    display: none;
+  }
+
+  .header-family {
+    font-size: 1.3rem;
+  }
+
+  .main {
+    padding: 12px;
+  }
+
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cal-views {
+    order: 10;
+    width: 100%;
+  }
+
+  .cal-views .btn {
+    flex: 1;
+    padding: 0 8px;
+    font-size: 0.82rem;
+  }
+
+  .chore-columns {
+    grid-auto-flow: row;
+    grid-auto-columns: unset;
+    grid-template-columns: 1fr;
+  }
+
+  .fab {
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .reminder-stack {
+    top: auto;
+    bottom: 90px;
+  }
+}

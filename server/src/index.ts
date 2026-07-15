@@ -4,8 +4,10 @@ import { openDb } from './db/index.js';
 import { logger } from './logger.js';
 import { startBackgroundRefresh } from './services/eventCache.js';
 import { initGoogle } from './services/googleCalendar.js';
+import { reportIntegration } from './routes/health.js';
 import { startDigestScheduler } from './services/digest.js';
-import { initGmail } from './services/gmail.js';
+import { gmailConfigured, initGmail } from './services/gmail.js';
+import { googleStatus } from './services/googleCalendar.js';
 import { startPhotosRefresh } from './services/photos.js';
 import { startWeatherRefresh } from './services/weather.js';
 
@@ -16,6 +18,18 @@ startBackgroundRefresh();
 startWeatherRefresh();
 startPhotosRefresh();
 startDigestScheduler();
+
+// Reflect real init results in /api/health.
+const gs = googleStatus();
+reportIntegration('googleCalendar', {
+  configured: gs.configured,
+  ok: gs.configured ? gs.initError === null : null,
+  detail: gs.initError ?? gs.serviceAccountEmail ?? undefined,
+});
+reportIntegration('gmail', {
+  configured: gmailConfigured(),
+  ok: gmailConfigured() ? true : null,
+});
 
 const app = createApp();
 const server = app.listen(config.port, () => {

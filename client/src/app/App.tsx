@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { EventReminders } from '../components/EventReminders';
 import { Onboarding } from '../components/Onboarding';
+import { SettingsLock } from '../components/SettingsLock';
 import { Slideshow } from '../features/screensaver/Slideshow';
 import { useScreensaver } from '../features/screensaver/useScreensaver';
 import { useSettings } from '../theme/ThemeProvider';
@@ -42,11 +44,19 @@ export function App() {
           <Route path="/photos" element={<PhotosPage />} />
           <Route path="/lists" element={<ListsPage />} />
           <Route path="/sleep" element={<SleepPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
+          <Route
+            path="/settings"
+            element={
+              <SettingsLock>
+                <SettingsPage />
+              </SettingsLock>
+            }
+          />
           <Route path="/weather" element={<WeatherPage />} />
           <Route path="*" element={<Navigate to="/calendar" replace />} />
         </Routes>
       </main>
+      <EventReminders />
     </div>
   );
 }
