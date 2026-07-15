@@ -29,6 +29,17 @@ export const SettingsSchema = z.object({
   locationQuery: z.string().trim().max(100).default(''),
   /** Set true when the first-run wizard completes. */
   onboarded: z.boolean().default(false),
+
+  /** What the panel does during the sleep window. */
+  sleepMode: z.enum(['off', 'dim', 'slideshow']).default('off'),
+  sleepStart: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).default('21:30'),
+  sleepEnd: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).default('06:30'),
+  /** Start the slideshow after this many idle minutes (0 = never). */
+  idleSlideshowMinutes: z.number().int().min(0).max(240).default(0),
+  /** Seconds each photo stays on screen. */
+  slideshowIntervalSeconds: z.number().int().min(5).max(120).default(12),
+  /** Cloudinary folder/prefix feeding the slideshow ('' = all photos). */
+  photoFolder: z.string().trim().max(200).default(''),
 });
 
 export type Settings = z.infer<typeof SettingsSchema>;

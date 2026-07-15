@@ -4,12 +4,14 @@ import { openDb } from './db/index.js';
 import { logger } from './logger.js';
 import { startBackgroundRefresh } from './services/eventCache.js';
 import { initGoogle } from './services/googleCalendar.js';
+import { startPhotosRefresh } from './services/photos.js';
 import { startWeatherRefresh } from './services/weather.js';
 
 openDb();
 initGoogle();
 startBackgroundRefresh();
 startWeatherRefresh();
+startPhotosRefresh();
 
 const app = createApp();
 const server = app.listen(config.port, () => {

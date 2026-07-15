@@ -1,5 +1,1 @@
-import { Placeholder } from './Placeholder';
-
-export function SleepPage() {
-  return <Placeholder title="Sleep" phase="Phase 6" />;
-}
+export { SleepPage } from '../features/screensaver/SleepPage';

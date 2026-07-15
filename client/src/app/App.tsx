@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Onboarding } from '../components/Onboarding';
+import { Slideshow } from '../features/screensaver/Slideshow';
+import { useScreensaver } from '../features/screensaver/useScreensaver';
 import { useSettings } from '../theme/ThemeProvider';
 import { TasksPage } from '../features/household/TasksPage';
 import { WeatherPage } from '../features/weather/WeatherPage';
@@ -16,8 +18,14 @@ import { Rail } from './Rail';
 
 export function App() {
   const settings = useSettings();
+  const screensaver = useScreensaver();
   if (!settings.onboarded) {
     return <Onboarding />;
+  }
+  if (screensaver.state !== 'awake') {
+    return (
+      <Slideshow dim={screensaver.state === 'dim'} onWake={screensaver.wake} />
+    );
   }
   return (
     <div className="shell">

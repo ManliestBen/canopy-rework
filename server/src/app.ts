@@ -15,6 +15,7 @@ import { calendarsRouter } from './routes/calendars.js';
 import { choresRouter, rewardsRouter } from './routes/chores.js';
 import { eventsRouter } from './routes/events.js';
 import { listsRouter, mealsRouter } from './routes/lists.js';
+import { photosRouter } from './routes/photos.js';
 import { tasksRouter } from './routes/tasks.js';
 import { weatherRouter } from './routes/weather.js';
 import { healthRouter } from './routes/health.js';
@@ -72,6 +73,7 @@ export function createApp(): express.Express {
   app.use('/api/lists', listsRouter);
   app.use('/api/meals', mealsRouter);
   app.use('/api/weather', weatherRouter);
+  app.use('/api/photos', photosRouter);
 
   // Static client (production build), SPA fallback.
   if (fs.existsSync(config.clientDist)) {
