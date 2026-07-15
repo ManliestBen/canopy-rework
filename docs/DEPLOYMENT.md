@@ -14,11 +14,21 @@ npm run build
 
 # Config: secrets live OUTSIDE the repo
 mkdir -p ~/.config/canopy && chmod 700 ~/.config/canopy
-cp .env.example .env   # edit: set CANOPY_DB_PATH=/home/pi/.config/canopy/canopy.db
+cp .env.example .env   # edit as needed (see below)
 ```
 
+**The database creates itself.** On first start Canopy creates its SQLite
+database, its directory, and applies all migrations automatically — with
+owner-only permissions, since the file holds the family PIN hash. You do not
+place any database file by hand. By default (with `NODE_ENV=production`) it
+lives at `~/.config/canopy/canopy.db`; set `CANOPY_DB_PATH` in `.env` to pin
+a different location. If you'd rather create it explicitly before the first
+boot, run `npm run bootstrap --workspace server` — it's idempotent.
+
 Keep Google keys in `~/.config/canopy/` with `chmod 600`, and reference
-them from `.env`. Never place key files inside the repo.
+them from `.env`. Never place key files inside the repo. Full per-integration
+setup (including obtaining the Google OAuth values) is in
+[SETUP_INTEGRATIONS.md](SETUP_INTEGRATIONS.md).
 
 ## systemd service (server)
 
@@ -33,6 +43,7 @@ Wants=network-online.target
 [Service]
 User=pi
 WorkingDirectory=/home/pi/canopy
+Environment=NODE_ENV=production
 EnvironmentFile=/home/pi/canopy/.env
 ExecStart=/usr/bin/npm run start
 Restart=always
