@@ -200,7 +200,7 @@ function AddCalendarForm({ onDone }: { onDone: () => void }) {
       {sourceType === 'google' && !google?.configured && (
         <p className="muted">
           ⚠️ Google isn't connected yet. An admin needs to add a service-account
-          key on the server — see the setup guide (docs/SETUP_GOOGLE.md).
+          key on the server — see the setup guide (docs/SETUP_INTEGRATIONS.md).
         </p>
       )}
 
