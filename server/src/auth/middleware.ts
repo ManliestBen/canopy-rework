@@ -19,7 +19,12 @@ export function hashToken(token: string): string {
 }
 
 export function isLoopback(req: Request): boolean {
-  return LOOPBACK.has(req.socket.remoteAddress ?? '');
+  // Test-only seam: vitest sets VITEST=true; production never runs under it.
+  // supertest always connects over loopback, so this lets integration tests
+  // simulate a non-loopback (remote) peer to exercise the PIN boundary.
+  const testOverride = process.env.VITEST ? req.headers['x-canopy-test-remote'] : undefined;
+  const addr = typeof testOverride === 'string' ? testOverride : req.socket.remoteAddress;
+  return LOOPBACK.has(addr ?? '');
 }
 
 function hasValidSession(req: Request): boolean {
