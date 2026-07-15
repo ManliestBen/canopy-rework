@@ -176,7 +176,6 @@ function DigestSettings({
   onPatch: (patch: SettingsPatch) => void;
 }) {
   const { data: email } = useEmailStatus();
-  const [testTo, setTestTo] = useState('');
   const [testResult, setTestResult] = useState<string | null>(null);
 
   if (!email?.configured) {
@@ -226,34 +225,26 @@ function DigestSettings({
         </div>
       )}
       <div className="field">
-        <label htmlFor="test-email">Send a test email</label>
-        <div style={{ display: 'flex', gap: 8, maxWidth: 460 }}>
-          <input
-            id="test-email"
-            className="input"
-            style={{ flex: 1 }}
-            placeholder="you@example.com"
-            value={testTo}
-            onChange={(e) => setTestTo(e.target.value)}
-          />
-          <button
-            className="btn"
-            disabled={!testTo.includes('@')}
-            onClick={async () => {
-              setTestResult('Sending…');
-              try {
-                await apiSend(OkSchema, 'POST', '/api/email/test', {
-                  to: testTo.trim(),
-                });
-                setTestResult('Sent ✓ — check the inbox');
-              } catch (err) {
-                setTestResult(err instanceof Error ? err.message : 'Failed');
-              }
-            }}
-          >
-            Send test
-          </button>
-        </div>
+        <label>Send a test email</label>
+        <p style={{ margin: '0 0 8px', opacity: 0.8 }}>
+          Sends a test message to the recipient(s) above. Add at least one
+          recipient first.
+        </p>
+        <button
+          className="btn"
+          disabled={!settings.digestEmails.trim()}
+          onClick={async () => {
+            setTestResult('Sending…');
+            try {
+              await apiSend(OkSchema, 'POST', '/api/email/test', {});
+              setTestResult('Sent ✓ — check the inbox');
+            } catch (err) {
+              setTestResult(err instanceof Error ? err.message : 'Failed');
+            }
+          }}
+        >
+          Send test
+        </button>
         {testResult && <p style={{ fontWeight: 700 }}>{testResult}</p>}
       </div>
     </div>
