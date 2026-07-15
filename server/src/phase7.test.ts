@@ -47,7 +47,10 @@ describe('announcements', () => {
 
   it('test email returns 503 when Gmail is not configured', async () => {
     const app = createApp();
-    const res = await request(app).post('/api/email/test').send({ to: 'a@b.com' });
+    // A recipient must be configured first; then the send fails because Gmail
+    // itself is not set up in tests.
+    await request(app).patch('/api/settings').send({ digestEmails: 'a@b.com' });
+    const res = await request(app).post('/api/email/test').send({});
     expect(res.status).toBe(503);
   });
 });

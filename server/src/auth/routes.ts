@@ -72,9 +72,16 @@ authRouter.post('/verify', loginLimiter, (req, res) => {
  * knowing the current PIN — so a guest's phone can't silently re-PIN
  * the house.
  */
-authRouter.post('/pin', (req, res) => {
+authRouter.post('/pin', loginLimiter, (req, res) => {
   const { currentPin, newPin } = PinSetSchema.parse(req.body);
-  if (hasPin() && !isLoopback(req)) {
+  // The panel (loopback) may set or change the PIN freely. A remote peer can
+  // only CHANGE an existing PIN (with the current one) — never create the
+  // first PIN, or a guest phone could claim it and lock the family out.
+  if (!isLoopback(req)) {
+    if (!hasPin()) {
+      res.status(403).json({ error: 'Set the PIN from the panel first', code: 'panel_only' });
+      return;
+    }
     if (!currentPin || !verifyPin(currentPin)) {
       res.status(403).json({ error: 'Current PIN is wrong', code: 'bad_pin' });
       return;

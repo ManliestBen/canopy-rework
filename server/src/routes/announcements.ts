@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import { AnnouncementCreateSchema } from '@canopy/shared';
 import { wrap } from '../lib/asyncRoute.js';
@@ -55,14 +56,30 @@ emailRouter.get('/status', (_req, res) => {
   res.json({ configured: gmailConfigured(), recipients: digestRecipients() });
 });
 
-const TestSchema = z.object({ to: z.string().email() });
+// Tight, dedicated limiter: this sends from the family's real Gmail identity,
+// so cap it hard regardless of the looser global write limit.
+const emailTestLimiter = rateLimit({
+  windowMs: 60 * 60_000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many test emails. Try again later.', code: 'rate_limited' },
+});
 
+// Sends only to the already-configured digest recipients — never an arbitrary
+// address supplied in the request (which would be an authenticated send-to-
+// anyone trigger on a reputation-bearing sender).
 emailRouter.post(
   '/test',
-  wrap(async (req, res) => {
-    const { to } = TestSchema.parse(req.body);
+  emailTestLimiter,
+  wrap(async (_req, res) => {
+    const recipients = digestRecipients();
+    if (recipients.length === 0) {
+      res.status(400).json({ error: 'Add a digest recipient first', code: 'no_recipient' });
+      return;
+    }
     await sendEmail(
-      [to],
+      recipients,
       'Canopy test email 🌳',
       'If you can read this, Canopy can send email. All set!',
     );
