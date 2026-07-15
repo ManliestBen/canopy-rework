@@ -4,3 +4,4 @@ export * from './schemas/api';
 export * from './schemas/users';
 export * from './schemas/auth';
 export * from './schemas/backup';
+export * from './schemas/calendar';

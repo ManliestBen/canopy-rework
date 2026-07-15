@@ -30,6 +30,25 @@ const MIGRATIONS: string[] = [
     expires_at TEXT
   ) STRICT;
   `,
+
+  // 2 — calendar sources + last-good event cache
+  `
+  CREATE TABLE calendars (
+    id          TEXT PRIMARY KEY,
+    title       TEXT NOT NULL,
+    source_type TEXT NOT NULL CHECK (source_type IN ('google','ics')),
+    source_ref  TEXT NOT NULL UNIQUE,
+    color       TEXT NOT NULL,
+    user_id     TEXT REFERENCES users(id) ON DELETE SET NULL,
+    created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+  ) STRICT;
+
+  CREATE TABLE event_cache (
+    calendar_id TEXT PRIMARY KEY REFERENCES calendars(id) ON DELETE CASCADE,
+    payload     TEXT NOT NULL,
+    fetched_at  TEXT NOT NULL
+  ) STRICT;
+  `,
 ];
 
 export function migrate(db: Database.Database): void {

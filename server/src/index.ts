@@ -2,8 +2,12 @@ import { createApp } from './app.js';
 import { config } from './config.js';
 import { openDb } from './db/index.js';
 import { logger } from './logger.js';
+import { startBackgroundRefresh } from './services/eventCache.js';
+import { initGoogle } from './services/googleCalendar.js';
 
 openDb();
+initGoogle();
+startBackgroundRefresh();
 
 const app = createApp();
 const server = app.listen(config.port, () => {

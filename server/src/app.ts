@@ -11,6 +11,8 @@ import { logger } from './logger.js';
 import { requireAuth } from './auth/middleware.js';
 import { authRouter } from './auth/routes.js';
 import { backupRouter } from './routes/backup.js';
+import { calendarsRouter } from './routes/calendars.js';
+import { eventsRouter } from './routes/events.js';
 import { healthRouter } from './routes/health.js';
 import { settingsRouter } from './routes/settings.js';
 import { usersRouter } from './routes/users.js';
@@ -58,6 +60,8 @@ export function createApp(): express.Express {
   app.use('/api/settings', settingsRouter);
   app.use('/api/users', usersRouter);
   app.use('/api/backup', backupRouter);
+  app.use('/api/calendars', calendarsRouter);
+  app.use('/api/events', eventsRouter);
 
   // Static client (production build), SPA fallback.
   if (fs.existsSync(config.clientDist)) {

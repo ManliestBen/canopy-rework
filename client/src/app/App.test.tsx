@@ -11,8 +11,13 @@ function renderApp(route = '/') {
     'fetch',
     vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
-      if (url.includes('/api/users')) {
+      if (url.includes('/api/users') || url.includes('/api/calendars')) {
         return new Response(JSON.stringify([]), { status: 200 });
+      }
+      if (url.includes('/api/events')) {
+        return new Response(JSON.stringify({ events: [], calendars: [] }), {
+          status: 200,
+        });
       }
       if (url.includes('/api/auth/status')) {
         return new Response(
@@ -64,7 +69,8 @@ describe('App shell', () => {
 
   it('redirects unknown routes to the calendar', async () => {
     renderApp('/nowhere');
-    expect(await screen.findByText(/Calendar is growing/i)).toBeInTheDocument();
+    // With no calendars configured, the calendar page shows its setup invite.
+    expect(await screen.findByText(/connect your calendars/i)).toBeInTheDocument();
   });
 
   it('shows onboarding before setup is complete', () => {
