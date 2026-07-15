@@ -1,0 +1,72 @@
+/*
+ * Canopy design tokens.
+ *
+ * Three layers:
+ *   1. Primitives  — raw palette values, defined ONCE (this file).
+ *   2. Semantic    — what the UI consumes (--bg-canvas, --text-primary…).
+ *      Defaults here describe the Skylight theme; themes.css overrides
+ *      only what differs per theme.
+ *   3. Component styles consume semantic tokens only — never hex values.
+ */
+
+:root {
+  /* ---- Primitives: the Skylight pastel family ---------------------- */
+  /* Member/calendar colors (saturated core, used for avatar chips/dots) */
+  --family-teal: #4fb3a5;
+  --family-coral: #e07a70;
+  --family-pink: #e88fa4;
+  --family-marigold: #eaa93f;
+  --family-lavender: #a284c9;
+  --family-green: #7cb46f;
+  --family-blue: #5f9fd8;
+  --family-slate: #8a97a8;
+
+  /* Pill tints (event/chore card backgrounds) derived from the family
+     colors — one source of truth, tints computed, not hand-picked. */
+  --tint-strength: 26%;
+  --pastel-teal: color-mix(in srgb, var(--family-teal) var(--tint-strength), white);
+  --pastel-coral: color-mix(in srgb, var(--family-coral) var(--tint-strength), white);
+  --pastel-pink: color-mix(in srgb, var(--family-pink) var(--tint-strength), white);
+  --pastel-marigold: color-mix(in srgb, var(--family-marigold) var(--tint-strength), white);
+  --pastel-lavender: color-mix(in srgb, var(--family-lavender) var(--tint-strength), white);
+  --pastel-green: color-mix(in srgb, var(--family-green) var(--tint-strength), white);
+  --pastel-blue: color-mix(in srgb, var(--family-blue) var(--tint-strength), white);
+  --pastel-slate: color-mix(in srgb, var(--family-slate) var(--tint-strength), white);
+
+  /* ---- Semantic tokens (Skylight defaults) -------------------------- */
+  --bg-canvas: #fcfcfa;
+  --bg-rail: #eef2f4;
+  --bg-panel: #ffffff;
+  --bg-panel-rgb: 255 255 255;
+  --bg-header: #ffffff;
+
+  --text-primary: #3a4351;
+  --text-secondary: #7c8794;
+  --text-on-pastel: #3a4351;
+  --text-on-accent: #ffffff;
+
+  --border-hairline: #e8eaed;
+  --accent: #2f80ce; /* FAB blue from the reference */
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, white);
+  --danger: #d05b52;
+  --success: #4f9d69;
+
+  --radius-card: 14px;
+  --radius-pill: 12px;
+  --radius-chip: 999px;
+
+  --shadow-soft: 0 1px 3px rgb(20 30 40 / 0.06), 0 4px 16px rgb(20 30 40 / 0.06);
+  --shadow-raised: 0 4px 10px rgb(20 30 40 / 0.12), 0 10px 30px rgb(20 30 40 / 0.10);
+
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --font-ui: 'Nunito Sans Variable', 'Segoe UI', system-ui, sans-serif;
+
+  /* Glass effect: strength is user-configurable (Settings → transparency).
+     --transparency is 0–100, set on <html> by ThemeProvider. */
+  --transparency: 35;
+  --panel-alpha: calc(1 - (var(--transparency) / 100) * 0.5);
+  --panel-blur: calc((var(--transparency) / 100) * 14px);
+
+  /* Touch: nothing interactive below this. */
+  --touch-target: 44px;
+}

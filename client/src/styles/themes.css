@@ -1,0 +1,101 @@
+/*
+ * Theme overrides. Each theme redefines ONLY the semantic tokens that
+ * differ from the Skylight defaults in tokens.css — never component
+ * styles, never the primitive palette.
+ */
+
+/* ---- Skylight Dark: same pastels, deep slate canvas ---------------- */
+[data-theme='skylight-dark'] {
+  --bg-canvas: #171c24;
+  --bg-rail: #10141b;
+  --bg-panel: #1f2630;
+  --bg-panel-rgb: 31 38 48;
+  --bg-header: #1c222c;
+  --text-primary: #e8ecf1;
+  --text-secondary: #98a2b0;
+  --border-hairline: #2a323e;
+  --accent-soft: color-mix(in srgb, var(--accent) 24%, #1f2630);
+  --shadow-soft: 0 1px 3px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+  --shadow-raised: 0 4px 10px rgb(0 0 0 / 0.5), 0 10px 30px rgb(0 0 0 / 0.4);
+  /* Pills keep pastel backgrounds with dark text — readable in both modes. */
+  --tint-strength: 38%;
+}
+
+/* ---- Classic Light / Dark: quieter, less playful -------------------- */
+[data-theme='light'] {
+  --bg-canvas: #f6f7f8;
+  --bg-rail: #ffffff;
+  --font-display: var(--font-ui);
+  --tint-strength: 20%;
+}
+
+[data-theme='dark'] {
+  --bg-canvas: #12151a;
+  --bg-rail: #0c0f13;
+  --bg-panel: #1a1f26;
+  --bg-panel-rgb: 26 31 38;
+  --bg-header: #171c22;
+  --text-primary: #e6e9ee;
+  --text-secondary: #9099a6;
+  --border-hairline: #262d36;
+  --font-display: var(--font-ui);
+  --tint-strength: 34%;
+  --shadow-soft: 0 1px 3px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+}
+
+/* ---- Bold: saturated, heavier presence ------------------------------ */
+[data-theme='bold-light'] {
+  --bg-canvas: #fdf8f2;
+  --bg-rail: #23303e;
+  --accent: #e0662f;
+  --text-primary: #26303c;
+  --tint-strength: 45%;
+  --radius-card: 10px;
+  --radius-pill: 8px;
+}
+
+[data-theme='bold-dark'] {
+  --bg-canvas: #101820;
+  --bg-rail: #0a1016;
+  --bg-panel: #1c2733;
+  --bg-panel-rgb: 28 39 51;
+  --bg-header: #16202a;
+  --accent: #f2984a;
+  --text-primary: #f0f3f6;
+  --text-secondary: #8fa0b0;
+  --border-hairline: #2c3a48;
+  --tint-strength: 50%;
+  --radius-card: 10px;
+  --radius-pill: 8px;
+  --shadow-soft: 0 1px 3px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+}
+
+/* ---- Pride: rainbow canvas, frosted panels -------------------------- */
+[data-theme='pride'] {
+  --bg-canvas: transparent;
+  --bg-rail: rgb(255 255 255 / 0.72);
+  --bg-panel: rgb(255 255 255 / 0.82);
+  --bg-panel-rgb: 255 255 255;
+  --bg-header: rgb(255 255 255 / 0.78);
+  --accent: #b0509e;
+  --border-hairline: rgb(58 67 81 / 0.14);
+}
+
+[data-theme='pride'] body {
+  background: linear-gradient(
+    155deg,
+    #f6c1c7 0%,
+    #f9dcb8 18%,
+    #f7f2be 36%,
+    #c9e8cd 54%,
+    #bcd9f2 72%,
+    #d7c5ec 90%
+  );
+  background-attachment: fixed;
+}
+
+[data-theme='pride'] .panel,
+[data-theme='pride'] .rail {
+  backdrop-filter: blur(calc(var(--panel-blur) + 6px));
+  -webkit-backdrop-filter: blur(calc(var(--panel-blur) + 6px));
+}
