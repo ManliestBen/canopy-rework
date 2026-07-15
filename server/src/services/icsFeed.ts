@@ -1,4 +1,5 @@
 import ical, { type CalendarComponent, type VEvent } from 'node-ical';
+import { toDateKey } from '@canopy/shared';
 
 /**
  * ICS subscriptions (school calendars, sports teams, holidays). Feeds
@@ -6,6 +7,12 @@ import ical, { type CalendarComponent, type VEvent } from 'node-ical';
  * recurrence rules for us via its embedded rrule support.
  */
 const TIMEOUT_MS = 10_000;
+
+// Recurrence expansion caps: a hostile or malformed feed with a
+// high-frequency rule would otherwise expand to millions of objects over
+// the cache window and block the single-process event loop.
+const MAX_OCCURRENCES_PER_EVENT = 1000;
+const MAX_EVENTS_PER_FEED = 5000;
 
 export type IcsEvent = {
   uid: string;
@@ -35,6 +42,27 @@ function isVEvent(c: CalendarComponent): c is VEvent {
 }
 
 /**
+ * node-ical returns rrule occurrences with the real instant's server-local
+ * wall clock stored in the Date's UTC fields whenever the event carries a
+ * TZID. Rebuild the real instant through the local-zone Date constructor;
+ * floating events (no tzid) are already real instants. This is what keeps an
+ * 8pm recurring event at 8pm instead of shifting it by the UTC offset, and
+ * it stays correct across DST transitions because the engine's DST tables
+ * produce the right wall-clock fields per occurrence.
+ */
+function occurrenceInstant(occ: Date, tzid: string | undefined): Date {
+  if (!tzid) return occ;
+  return new Date(
+    occ.getUTCFullYear(),
+    occ.getUTCMonth(),
+    occ.getUTCDate(),
+    occ.getUTCHours(),
+    occ.getUTCMinutes(),
+    occ.getUTCSeconds(),
+  );
+}
+
+/**
  * Parse ICS text and return concrete events within [windowStart, windowEnd],
  * with recurrences expanded.
  */
@@ -48,6 +76,7 @@ export function parseIcsEvents(
 
   for (const component of Object.values(parsed)) {
     if (!isVEvent(component)) continue;
+    if (out.length >= MAX_EVENTS_PER_FEED) break;
     const ev = component;
     const durationMs =
       (ev.end?.getTime() ?? ev.start.getTime()) - ev.start.getTime();
@@ -55,22 +84,48 @@ export function parseIcsEvents(
     const allDay = (ev.start as Date & { dateOnly?: boolean }).dateOnly === true;
 
     if (ev.rrule) {
-      const overridden = new Set(
-        Object.keys(ev.recurrences ?? {}), // ISO date strings of overridden instances
-      );
-      for (const occ of ev.rrule.between(windowStart, windowEnd, true)) {
-        const key = occ.toISOString().slice(0, 10);
-        if (ev.exdate && Object.keys(ev.exdate).some((d) => d.startsWith(key))) continue;
-        if (overridden.has(key)) continue;
+      const tzid =
+        (ev.rrule.origOptions.tzid as string | null | undefined) ?? undefined;
+
+      // exdate/recurrence exclusions must be matched in the SAME frame as the
+      // occurrence's real instant, or the wrong day is dropped. exdate values
+      // and recurrenceid are real-instant Dates from node-ical.
+      const asKey = (d: Date) => (allDay ? toDateKey(d) : String(d.getTime()));
+      const excluded = new Set<string>([
+        ...Object.values(ev.exdate ?? {}).map((d) => asKey(d as Date)),
+        ...Object.values(ev.recurrences ?? {}).map((o) => {
+          const rid = (o as VEvent & { recurrenceid?: Date }).recurrenceid;
+          return asKey(rid ?? (o as VEvent).start);
+        }),
+      ]);
+
+      // Widen the expansion window by a day each side (the floating frame can
+      // skew boundaries by up to the UTC offset), then filter by real instant.
+      const expandStart = new Date(windowStart.getTime() - 86_400_000);
+      const expandEnd = new Date(windowEnd.getTime() + 86_400_000);
+      // Use the iterator form so a pathological high-frequency rule (e.g.
+      // FREQ=MINUTELY with no COUNT) stops early instead of materializing
+      // millions of Dates before we can cap the output.
+      const occurrences: Date[] = [];
+      ev.rrule.between(expandStart, expandEnd, true, (occ) => {
+        occurrences.push(occ);
+        return occurrences.length < MAX_OCCURRENCES_PER_EVENT;
+      });
+      for (const occ of occurrences) {
+        if (out.length >= MAX_EVENTS_PER_FEED) break;
+        const start = occurrenceInstant(occ, tzid);
+        if (start > windowEnd || start < windowStart) continue;
+        if (excluded.has(asKey(start))) continue;
+        const ruleLine = ev.rrule.toString().split('\n').pop() ?? '';
         out.push({
-          uid: `${ev.uid}:${occ.toISOString()}`,
+          uid: `${ev.uid}:${start.toISOString()}`,
           title: ev.summary ?? '(untitled)',
           allDay,
-          start: occ,
-          end: new Date(occ.getTime() + durationMs),
+          start,
+          end: new Date(start.getTime() + durationMs),
           location: ev.location || undefined,
           description: ev.description || undefined,
-          rrule: `RRULE:${ev.rrule.toString().split('\n').pop() ?? ''}`,
+          rrule: ruleLine.startsWith('RRULE:') ? ruleLine : `RRULE:${ruleLine}`,
         });
       }
       // Overridden instances (moved occurrences) come through as their own entries.
