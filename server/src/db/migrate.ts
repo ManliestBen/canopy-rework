@@ -49,6 +49,57 @@ const MIGRATIONS: string[] = [
     fetched_at  TEXT NOT NULL
   ) STRICT;
   `,
+
+  // 3 — tasks, chores, rewards
+  `
+  CREATE TABLE tasks (
+    id           TEXT PRIMARY KEY,
+    title        TEXT NOT NULL,
+    notes        TEXT NOT NULL DEFAULT '',
+    user_id      TEXT REFERENCES users(id) ON DELETE SET NULL,
+    category     TEXT NOT NULL DEFAULT '',
+    due_key      TEXT,
+    schedule     TEXT NOT NULL DEFAULT 'none'
+                 CHECK (schedule IN ('none','daily','weekdays','weekly','monthly')),
+    completed_at TEXT,
+    created_at   TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+  ) STRICT;
+
+  CREATE TABLE task_completions (
+    task_id  TEXT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    date_key TEXT NOT NULL,
+    PRIMARY KEY (task_id, date_key)
+  ) STRICT;
+
+  CREATE TABLE chores (
+    id         TEXT PRIMARY KEY,
+    title      TEXT NOT NULL,
+    icon       TEXT NOT NULL DEFAULT '',
+    user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    points     INTEGER NOT NULL DEFAULT 1,
+    schedule   TEXT NOT NULL DEFAULT 'daily'
+               CHECK (schedule IN ('daily','weekdays','weekly')),
+    anchor_key TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+  ) STRICT;
+
+  CREATE TABLE chore_completions (
+    chore_id     TEXT NOT NULL REFERENCES chores(id) ON DELETE CASCADE,
+    date_key     TEXT NOT NULL,
+    points       INTEGER NOT NULL,
+    user_id      TEXT NOT NULL,
+    completed_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+    PRIMARY KEY (chore_id, date_key)
+  ) STRICT;
+
+  CREATE TABLE reward_redemptions (
+    id         TEXT PRIMARY KEY,
+    user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    points     INTEGER NOT NULL,
+    note       TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+  ) STRICT;
+  `,
 ];
 
 export function migrate(db: Database.Database): void {

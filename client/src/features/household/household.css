@@ -1,0 +1,317 @@
+/* Chores, rewards, tasks, timer. */
+
+.chores-page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+}
+
+.chore-columns {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+  align-items: start;
+  overflow-x: auto;
+}
+
+.chore-column {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 100%;
+  overflow-y: auto;
+  min-width: 200px;
+}
+
+.chore-column-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chore-column-name {
+  display: flex;
+  flex-direction: column;
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1.15;
+}
+
+.chore-count {
+  font-size: 0.8rem;
+}
+
+.chore-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: rgb(20 30 40 / 0.08);
+  overflow: hidden;
+}
+
+.chore-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.chore-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chore-pill {
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-pill);
+  padding: 8px 8px 8px 12px;
+  gap: 8px;
+}
+
+.chore-pill.done {
+  opacity: 0.55;
+}
+
+.chore-pill.done .chore-pill-title {
+  text-decoration: line-through;
+}
+
+.chore-pill-main {
+  flex: 1;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  color: var(--text-on-pastel);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: var(--touch-target);
+  justify-content: center;
+  min-width: 0;
+}
+
+.chore-pill-title {
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.chore-pill-sub {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.chore-check {
+  width: var(--touch-target);
+  height: var(--touch-target);
+  border-radius: 50%;
+  border: 2.5px solid rgb(20 30 40 / 0.25);
+  background: rgb(255 255 255 / 0.6);
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.chore-check.checked {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+}
+
+.chore-check:active {
+  transform: scale(0.9);
+}
+
+.chore-none {
+  text-align: center;
+  padding: 10px 0;
+}
+
+/* ---- Rewards ---------------------------------------------------------- */
+.reward-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.reward-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.reward-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reward-card-name {
+  font-weight: 800;
+  font-size: 1.15rem;
+}
+
+.reward-balance {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 10px 0 2px;
+}
+
+.reward-stars {
+  font-size: 1.6rem;
+}
+
+.reward-number {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.redemption-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch-target);
+}
+
+/* ---- Tasks ------------------------------------------------------------ */
+.task-section {
+  padding: 14px 18px;
+  margin-bottom: 14px;
+}
+
+.task-section-title {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+
+.task-section-title.overdue {
+  color: var(--danger);
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.task-row.done .task-row-title {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.task-row-main {
+  flex: 1;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-height: var(--touch-target);
+  justify-content: center;
+  min-width: 0;
+}
+
+.task-row-title {
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.task-row-sub {
+  font-size: 0.8rem;
+}
+
+/* ---- Timer ------------------------------------------------------------ */
+.timer-launch {
+  font-size: 1.4rem;
+}
+
+.timer-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-canvas);
+  display: grid;
+  place-items: center;
+  z-index: 70;
+}
+
+.timer-overlay.finished {
+  animation: timer-flash 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes timer-flash {
+  from {
+    background: var(--bg-canvas);
+  }
+  to {
+    background: color-mix(in srgb, var(--danger) 22%, var(--bg-canvas));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timer-overlay.finished {
+    animation: none;
+    background: color-mix(in srgb, var(--danger) 15%, var(--bg-canvas));
+  }
+}
+
+.timer-setup {
+  padding: 28px;
+  width: min(480px, 92vw);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.timer-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.timer-preset {
+  font-size: 1.1rem;
+  min-height: 56px;
+  flex: 1;
+}
+
+.timer-running {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.timer-digits {
+  position: absolute;
+  top: 130px;
+  font-family: var(--font-display);
+  font-size: 3.4rem;
+  font-weight: 600;
+}
+
+.timer-actions {
+  display: flex;
+  gap: 12px;
+}

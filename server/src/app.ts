@@ -12,7 +12,9 @@ import { requireAuth } from './auth/middleware.js';
 import { authRouter } from './auth/routes.js';
 import { backupRouter } from './routes/backup.js';
 import { calendarsRouter } from './routes/calendars.js';
+import { choresRouter, rewardsRouter } from './routes/chores.js';
 import { eventsRouter } from './routes/events.js';
+import { tasksRouter } from './routes/tasks.js';
 import { healthRouter } from './routes/health.js';
 import { settingsRouter } from './routes/settings.js';
 import { usersRouter } from './routes/users.js';
@@ -62,6 +64,9 @@ export function createApp(): express.Express {
   app.use('/api/backup', backupRouter);
   app.use('/api/calendars', calendarsRouter);
   app.use('/api/events', eventsRouter);
+  app.use('/api/tasks', tasksRouter);
+  app.use('/api/chores', choresRouter);
+  app.use('/api/rewards', rewardsRouter);
 
   // Static client (production build), SPA fallback.
   if (fs.existsSync(config.clientDist)) {

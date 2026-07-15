@@ -8,15 +8,17 @@ import {
   RewardsIcon,
   SettingsIcon,
   SleepIcon,
+  TodosIcon,
 } from './icons';
 
 const NAV = [
   { to: '/calendar', label: 'Calendar', Icon: CalendarIcon },
   { to: '/chores', label: 'Chores', Icon: ChoresIcon },
   { to: '/rewards', label: 'Rewards', Icon: RewardsIcon },
+  { to: '/todos', label: 'To-Dos', Icon: TodosIcon },
   { to: '/meals', label: 'Meals', Icon: MealsIcon },
-  { to: '/photos', label: 'Photos', Icon: PhotosIcon },
   { to: '/lists', label: 'Lists', Icon: ListsIcon },
+  { to: '/photos', label: 'Photos', Icon: PhotosIcon },
   { to: '/sleep', label: 'Sleep', Icon: SleepIcon },
   { to: '/settings', label: 'Settings', Icon: SettingsIcon },
 ] as const;

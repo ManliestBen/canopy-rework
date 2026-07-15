@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Onboarding } from '../components/Onboarding';
 import { useSettings } from '../theme/ThemeProvider';
+import { TasksPage } from '../features/household/TasksPage';
 import { CalendarPage } from '../pages/CalendarPage';
 import { ChoresPage } from '../pages/ChoresPage';
 import { ListsPage } from '../pages/ListsPage';
@@ -27,6 +28,7 @@ export function App() {
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/chores" element={<ChoresPage />} />
           <Route path="/rewards" element={<RewardsPage />} />
+          <Route path="/todos" element={<TasksPage />} />
           <Route path="/meals" element={<MealsPage />} />
           <Route path="/photos" element={<PhotosPage />} />
           <Route path="/lists" element={<ListsPage />} />
