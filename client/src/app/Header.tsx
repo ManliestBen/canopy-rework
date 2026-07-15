@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { MemberChip } from '../components/MemberChip';
 import { TimerButton } from '../components/Timer';
+import { AnnounceButton } from '../features/announcements/Announcements';
 import { WeatherChip } from '../features/weather/WeatherChip';
 import { useNow } from '../hooks/useNow';
 import { useUsers } from '../lib/users';
@@ -20,6 +21,7 @@ export function Header() {
       <div className="header-date">{format(now, 'EEEE, MMMM d')}</div>
       <div className="header-spacer" />
       <WeatherChip />
+      <AnnounceButton />
       <TimerButton />
       <div className="header-members">
         {users.map((u) => (

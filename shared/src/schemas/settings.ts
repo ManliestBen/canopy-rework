@@ -40,6 +40,12 @@ export const SettingsSchema = z.object({
   slideshowIntervalSeconds: z.number().int().min(5).max(120).default(12),
   /** Cloudinary folder/prefix feeding the slideshow ('' = all photos). */
   photoFolder: z.string().trim().max(200).default(''),
+
+  /** Daily agenda digest email (needs Gmail configured on the server). */
+  digestEnabled: z.boolean().default(false),
+  digestTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).default('06:45'),
+  /** Comma-separated recipient addresses. */
+  digestEmails: z.string().trim().max(500).default(''),
 });
 
 export type Settings = z.infer<typeof SettingsSchema>;

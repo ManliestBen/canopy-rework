@@ -1,11 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
+  OkSchema,
   SettingsSchema,
   THEMES,
   type Settings,
   type SettingsPatch,
 } from '@canopy/shared';
 import { useState } from 'react';
+import { useEmailStatus } from '../features/announcements/api';
 import { BackupSettings } from '../components/BackupSettings';
 import { PinSettings } from '../components/PinSettings';
 import { UserManager } from '../components/UserManager';
@@ -119,10 +121,110 @@ export function SettingsPage() {
         <PinSettings />
       </section>
 
+      <section className="panel" style={{ padding: 20, marginBottom: 20 }}>
+        <h2 style={{ marginTop: 0 }}>Daily email digest</h2>
+        <DigestSettings
+          settings={settings}
+          onPatch={(patch) => mutation.mutate(patch)}
+        />
+      </section>
+
       <section className="panel" style={{ padding: 20 }}>
         <h2 style={{ marginTop: 0 }}>Backup</h2>
         <BackupSettings />
       </section>
+    </div>
+  );
+}
+
+function DigestSettings({
+  settings,
+  onPatch,
+}: {
+  settings: Settings;
+  onPatch: (patch: SettingsPatch) => void;
+}) {
+  const { data: email } = useEmailStatus();
+  const [testTo, setTestTo] = useState('');
+  const [testResult, setTestResult] = useState<string | null>(null);
+
+  if (!email?.configured) {
+    return (
+      <p className="muted">
+        Email isn't set up on the server yet (Gmail OAuth credentials). See the
+        setup guide — then Canopy can send a morning agenda email and family
+        announcements.
+      </p>
+    );
+  }
+
+  return (
+    <div>
+      <div className="field">
+        <label className="checkbox-row">
+          <input
+            type="checkbox"
+            checked={settings.digestEnabled}
+            onChange={(e) => onPatch({ digestEnabled: e.target.checked })}
+          />
+          Send a morning "today at a glance" email
+        </label>
+      </div>
+      {settings.digestEnabled && (
+        <div className="field-grid">
+          <div className="field">
+            <label htmlFor="digest-time">Send at</label>
+            <input
+              id="digest-time"
+              type="time"
+              className="input"
+              value={settings.digestTime}
+              onChange={(e) => onPatch({ digestTime: e.target.value })}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="digest-emails">Recipients (comma-separated)</label>
+            <input
+              id="digest-emails"
+              className="input"
+              placeholder="you@example.com, partner@example.com"
+              defaultValue={settings.digestEmails}
+              onBlur={(e) => onPatch({ digestEmails: e.target.value })}
+            />
+          </div>
+        </div>
+      )}
+      <div className="field">
+        <label htmlFor="test-email">Send a test email</label>
+        <div style={{ display: 'flex', gap: 8, maxWidth: 460 }}>
+          <input
+            id="test-email"
+            className="input"
+            style={{ flex: 1 }}
+            placeholder="you@example.com"
+            value={testTo}
+            onChange={(e) => setTestTo(e.target.value)}
+          />
+          <button
+            className="btn"
+            disabled={!testTo.includes('@')}
+            onClick={async () => {
+              setTestResult('Sending…');
+              try {
+                await apiSend(OkSchema, 'POST', '/api/email/test', {
+                  to: testTo.trim(),
+                });
+                setTestResult('Sent ✓ — check the inbox');
+              } catch (err) {
+                setTestResult(err instanceof Error ? err.message : 'Failed');
+              }
+            }}
+          >
+            Send test
+          </button>
+        </div>
+        {testResult && <p style={{ fontWeight: 700 }}>{testResult}</p>}
+      </div>
     </div>
   );
 }

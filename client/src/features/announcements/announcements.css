@@ -1,0 +1,39 @@
+/* Sticky notes. */
+
+.notes-strip {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--pastel-marigold);
+  color: var(--text-on-pastel);
+  border-radius: 4px 14px 14px 14px;
+  padding: 8px 6px 8px 14px;
+  box-shadow: var(--shadow-soft);
+  font-weight: 800;
+  max-width: 100%;
+}
+
+.note-emoji {
+  font-size: 1.2rem;
+}
+
+.note-text {
+  overflow-wrap: anywhere;
+}
+
+.note-dismiss {
+  border: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  cursor: pointer;
+  font-size: 0.95rem;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+}

@@ -142,6 +142,18 @@ const MIGRATIONS: string[] = [
     fetched_at TEXT NOT NULL
   ) STRICT;
   `,
+
+  // 6 — family announcements
+  `
+  CREATE TABLE announcements (
+    id         TEXT PRIMARY KEY,
+    text       TEXT NOT NULL,
+    author_id  TEXT REFERENCES users(id) ON DELETE SET NULL,
+    emoji      TEXT NOT NULL DEFAULT '📌',
+    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+    expires_at TEXT
+  ) STRICT;
+  `,
 ];
 
 export function migrate(db: Database.Database): void {

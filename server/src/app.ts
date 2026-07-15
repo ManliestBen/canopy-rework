@@ -10,6 +10,7 @@ import { config } from './config.js';
 import { logger } from './logger.js';
 import { requireAuth } from './auth/middleware.js';
 import { authRouter } from './auth/routes.js';
+import { announcementsRouter, emailRouter } from './routes/announcements.js';
 import { backupRouter } from './routes/backup.js';
 import { calendarsRouter } from './routes/calendars.js';
 import { choresRouter, rewardsRouter } from './routes/chores.js';
@@ -74,6 +75,8 @@ export function createApp(): express.Express {
   app.use('/api/meals', mealsRouter);
   app.use('/api/weather', weatherRouter);
   app.use('/api/photos', photosRouter);
+  app.use('/api/announcements', announcementsRouter);
+  app.use('/api/email', emailRouter);
 
   // Static client (production build), SPA fallback.
   if (fs.existsSync(config.clientDist)) {
@@ -97,9 +100,14 @@ export function createApp(): express.Express {
       });
       return;
     }
-    // Services attach `status` for expected failures (404s etc.).
+    // Services attach `status` for expected failures (404, 409, 503…);
+    // those messages are ours and safe to show. Anything without a
+    // status is unexpected → generic message, full details to the log.
     const status = (err as { status?: number }).status;
-    if (status && status >= 400 && status < 500) {
+    if (status && status >= 400 && status < 600) {
+      if (status >= 500) {
+        logger.warn({ err, url: req.url }, 'service unavailable');
+      }
       res.status(status).json({ error: (err as Error).message, code: 'request_failed' });
       return;
     }

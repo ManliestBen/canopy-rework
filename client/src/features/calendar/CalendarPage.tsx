@@ -14,6 +14,7 @@ import { useMemo, useState } from 'react';
 import { MemberChip } from '../../components/MemberChip';
 import { useNow } from '../../hooks/useNow';
 import { useUsers } from '../../lib/users';
+import { AnnouncementStrip } from '../announcements/Announcements';
 import { AgendaView } from './AgendaView';
 import { CalendarManager } from './CalendarManager';
 import { EventDetailModal } from './EventDetailModal';
@@ -99,6 +100,7 @@ export function CalendarPage() {
 
   return (
     <div className="calendar-page">
+      <AnnouncementStrip />
       <div className="cal-toolbar">
         <h1 className="page-title" style={{ margin: 0 }}>
           {title}

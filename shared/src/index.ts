@@ -11,3 +11,4 @@ export * from './schemas/lists';
 export * from './schemas/weather';
 export * from './sleep';
 export * from './schemas/photos';
+export * from './schemas/announcements';
