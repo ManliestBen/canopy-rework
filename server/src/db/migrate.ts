@@ -100,6 +100,39 @@ const MIGRATIONS: string[] = [
     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
   ) STRICT;
   `,
+
+  // 4 — shopping lists + meal planner
+  `
+  CREATE TABLE lists (
+    id         TEXT PRIMARY KEY,
+    title      TEXT NOT NULL,
+    emoji      TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+  ) STRICT;
+
+  CREATE TABLE list_items (
+    id          TEXT PRIMARY KEY,
+    list_id     TEXT NOT NULL REFERENCES lists(id) ON DELETE CASCADE,
+    text        TEXT NOT NULL,
+    assignee_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+    done        INTEGER NOT NULL DEFAULT 0,
+    created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+  ) STRICT;
+
+  CREATE TABLE meals (
+    id       TEXT PRIMARY KEY,
+    date_key TEXT NOT NULL,
+    slot     TEXT NOT NULL CHECK (slot IN ('breakfast','lunch','dinner')),
+    name     TEXT NOT NULL,
+    notes    TEXT NOT NULL DEFAULT '',
+    UNIQUE (date_key, slot)
+  ) STRICT;
+
+  CREATE TABLE item_history (
+    text       TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+  ) STRICT;
+  `,
 ];
 
 export function migrate(db: Database.Database): void {

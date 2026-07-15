@@ -1,0 +1,195 @@
+/* Shopping lists + meal planner. */
+
+.lists-page,
+.meals-page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+}
+
+.list-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.list-count {
+  background: rgb(20 30 40 / 0.12);
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 0.75rem;
+  margin-left: 6px;
+}
+
+.list-panel {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.list-add-row {
+  display: flex;
+  gap: 10px;
+}
+
+.frequent-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.frequent-chip {
+  background: var(--accent-soft);
+  font-size: 0.85rem;
+  min-height: 38px;
+}
+
+.list-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.list-row:last-child {
+  border-bottom: none;
+}
+
+.list-row.done .list-row-text {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.list-row-text {
+  flex: 1;
+  font-weight: 700;
+  font-size: 1.02rem;
+}
+
+.list-assignee {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.list-assignee-empty {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px dashed var(--border-hairline);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.list-empty {
+  text-align: center;
+  padding: 18px 0;
+}
+
+.list-done {
+  border-top: 1px solid var(--border-hairline);
+  padding-top: 8px;
+}
+
+.list-done-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ---- Meals grid --------------------------------------------------------- */
+.meals-grid {
+  display: grid;
+  grid-template-columns: 110px repeat(7, 1fr);
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px;
+  gap: 6px;
+}
+
+.meals-corner {
+  grid-column: 1;
+}
+
+.meals-dayhead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.meals-dayhead.today .dayhead-num {
+  color: var(--accent);
+}
+
+.meals-slotlabel {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+}
+
+.meals-cell {
+  border: 1.5px dashed var(--border-hairline);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  min-height: 76px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px;
+  text-align: center;
+}
+
+.meals-cell.today {
+  border-color: var(--accent);
+}
+
+.meals-cell.filled {
+  border-style: solid;
+  border-color: transparent;
+  background: var(--pastel-green);
+  color: var(--text-on-pastel);
+}
+
+.meals-cell-name {
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.meals-cell-notes {
+  font-size: 0.72rem;
+  opacity: 0.75;
+}
+
+.meals-cell-plus {
+  color: var(--text-secondary);
+  font-size: 1.3rem;
+}
