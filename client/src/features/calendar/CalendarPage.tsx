@@ -10,9 +10,8 @@ import {
   type CalendarEvent,
   type DateKey,
 } from '@canopy/shared';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MemberChip } from '../../components/MemberChip';
-import { useNow } from '../../hooks/useNow';
 import { useUsers } from '../../lib/users';
 import { AnnouncementStrip } from '../announcements/Announcements';
 import { AgendaView } from './AgendaView';
@@ -35,9 +34,20 @@ const VIEW_LABELS: Record<ViewMode, string> = {
 };
 
 export function CalendarPage() {
-  const now = useNow();
-  const todayKey = computeTodayKey();
-  void now; // ticking re-render keeps todayKey fresh past midnight
+  // todayKey must roll over at midnight, but we don't want a per-minute tick
+  // to re-render the whole page. Poll once a minute and only update state on
+  // the tick that actually crosses midnight (referential no-op otherwise, so
+  // React bails out of the re-render).
+  const [todayKey, setTodayKey] = useState(computeTodayKey);
+  useEffect(() => {
+    const id = setInterval(() => {
+      setTodayKey((prev) => {
+        const next = computeTodayKey();
+        return next === prev ? prev : next;
+      });
+    }, 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   const [view, setView] = useState<ViewMode>('week');
   const [anchor, setAnchor] = useState<DateKey>(todayKey);

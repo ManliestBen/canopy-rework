@@ -1,6 +1,6 @@
 import { formatKey, formatTime, type CalendarEvent, type DateKey } from '@canopy/shared';
 import { useEffect, useMemo, useRef } from 'react';
-import { useNow } from '../../hooks/useNow';
+import { NowLine } from '../../components/NowLine';
 import { useWeather } from '../weather/api';
 import { EventMemberDot } from './EventPill';
 import { layoutBanners, layoutDay, isBanner } from './layout';
@@ -39,7 +39,6 @@ export function TimeGridView({
   onEventClick: (event: CalendarEvent) => void;
   onAddForDay: (day: DateKey) => void;
 }) {
-  const now = useNow();
   const scroller = useRef<HTMLDivElement>(null);
   const { data: weather } = useWeather();
 
@@ -55,8 +54,14 @@ export function TimeGridView({
     () => days.map((day) => layoutDay(timed, day)),
     [timed, days],
   );
+  const countByDay = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const day of days) {
+      m.set(day, events.filter((e) => e.startKey <= day && e.endKey >= day).length);
+    }
+    return m;
+  }, [events, days]);
 
-  const nowMinutes = now.getHours() * 60 + now.getMinutes();
   const colWidth = `calc((100% - 56px) / ${days.length})`;
 
   return (
@@ -65,9 +70,7 @@ export function TimeGridView({
       <div className="timegrid-header">
         <div className="timegrid-gutter" />
         {days.map((day) => {
-          const count = events.filter(
-            (e) => e.startKey <= day && e.endKey >= day,
-          ).length;
+          const count = countByDay.get(day) ?? 0;
           return (
             <div
               key={day}
@@ -162,12 +165,7 @@ export function TimeGridView({
                   </span>
                 </button>
               ))}
-              {day === todayKey && (
-                <div
-                  className="timegrid-nowline"
-                  style={{ top: (nowMinutes / 60) * HOUR_PX }}
-                />
-              )}
+              {day === todayKey && <NowLine pxPerMinute={HOUR_PX / 60} />}
             </div>
           ))}
         </div>
