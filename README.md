@@ -33,7 +33,8 @@ the start. See [PLAN.md](PLAN.md) for the full architecture rationale.
 
 | Doc | For |
 |---|---|
-| [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | The family — how to use everything |
+| **In-app guide** — tap ❓ in the panel's header (route `/help`) | The family — beautiful, theme-aware, works on phones |
+| [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | Same content as markdown (renders on GitHub) |
 | [docs/SETUP_INTEGRATIONS.md](docs/SETUP_INTEGRATIONS.md) | Connecting Google, weather, photos, email |
 | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Raspberry Pi kiosk install |
 | [PLAN.md](PLAN.md) | Architecture & build plan |

@@ -5,6 +5,7 @@ import { SettingsLock } from '../components/SettingsLock';
 import { Slideshow } from '../features/screensaver/Slideshow';
 import { useScreensaver } from '../features/screensaver/useScreensaver';
 import { useSettings } from '../theme/ThemeProvider';
+import { HelpPage } from '../features/help/HelpPage';
 import { TasksPage } from '../features/household/TasksPage';
 import { WeatherPage } from '../features/weather/WeatherPage';
 import { CalendarPage } from '../pages/CalendarPage';
@@ -53,6 +54,7 @@ export function App() {
             }
           />
           <Route path="/weather" element={<WeatherPage />} />
+          <Route path="/help" element={<HelpPage />} />
           <Route path="*" element={<Navigate to="/calendar" replace />} />
         </Routes>
       </main>

@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { Link } from 'react-router-dom';
 import { MemberChip } from '../components/MemberChip';
 import { OfflineBadge } from '../components/OfflineBadge';
 import { TimerButton } from '../components/Timer';
@@ -25,6 +26,9 @@ export function Header() {
       <WeatherChip />
       <AnnounceButton />
       <TimerButton />
+      <Link to="/help" className="btn btn-ghost timer-launch" aria-label="Family guide">
+        ❓
+      </Link>
       <div className="header-members">
         {users.map((u) => (
           <MemberChip key={u.id} user={u} />
