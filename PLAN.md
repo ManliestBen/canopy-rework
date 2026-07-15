@@ -169,21 +169,19 @@ Every phase ends with a usable app. Checkboxes map to `feature-list.md`; **➕ N
 - Cloudinary slideshow: folder/tag selection, preload + crossfade, local starter set; photo sources pluggable (local/NAS on roadmap per feature list)
 - ➕ NEW: Screensaver overlay widgets (clock, next event, weather over photos)
 
-### Phase 7 — Home Assistant
-- **Allowlisted** server-side HA proxy (SEC-2), token server-only (SEC-3), graceful degradation when HA absent (BE-6)
-- Port six control areas as one "Home" section, restyled to tokens; optimistic controls via mutations (FE-1)
-- ➕ NEW: HA WebSocket for live entity state (falls back to polling)
-- Stretch: HA notifications, cameras, scenes/routines (ties sleep/wake + HA), energy widget
-
-### Phase 8 — Messaging & Gmail
+### Phase 7 — Messaging & Gmail
 - Port Gmail send as a configured server module (not a script); family announcements / sticky notes on main screen
 - Outbound: event/task reminders, optional daily agenda digest
 - Stretch: inbound email-to-add; guest-access links; **consolidate Calendar onto the Canopy Gmail identity** (per feature list)
 
-### Phase 9 — Hardening & stretch
+### Phase 8 — Hardening & stretch
 - Offline/degraded mode (builds on BE-2's last-good cache + Query persistence), offline indicator
 - Event reminders with on-panel visible/audible alerts; guest/view-only mode; vacation/away mode; multi-device naming; responsive/mobile pass
 - Root-Access-Granted integration as its own rail section (deferred, per feature list)
+
+### Phase 9 — Documentation
+- **Family-facing user guide** (`docs/USER_GUIDE.md`): easy instructions for every feature, written for non-technical family members
+- Admin/setup guide (Google Calendar sharing, ICS URLs, Cloudinary, weather key) and deployment docs finalized
 
 ---
 
@@ -200,7 +198,7 @@ Every phase ends with a usable app. Checkboxes map to `feature-list.md`; **➕ N
 | 7 | Frequent-items quick add | 4 | Grocery lists live or die on entry speed |
 | 8 | Lightweight meal planner → shopping list | 4 | Fills the Skylight rail's "Meals" slot; kept simple |
 | 9 | Screensaver overlay widgets | 6 | Panel stays useful while "asleep" |
-| 10 | HA WebSocket live updates | 7 | Instant device state vs 30s polling |
+| 10 | ~~HA WebSocket live updates~~ | — | Moved to stretch with all HA features |
 | 11 | Health endpoint + structured logs | 0 | Wall-mounted devices fail silently otherwise |
 | 12 | Playwright E2E smoke tests | 0+ | CI confidence for a device you don't watch |
 
@@ -220,6 +218,6 @@ Every phase ends with a usable app. Checkboxes map to `feature-list.md`; **➕ N
 
 ## Explicitly deferred / dropped
 
+- **All Home Assistant integration → stretch goals** (owner decision 2026-07-15: uncertain it will get used). When/if built: allowlisted proxy (SEC-2), server-only token (SEC-3), graceful degradation (BE-6), six control areas, WebSocket live state, then cameras/notifications/scenes/energy. The architecture keeps integrations independent, so HA can be added later without rework.
 - Google Photos (dropped per feature list — Cloudinary instead)
 - Root-Access-Granted (deferred, own phase later)
-- HA cameras/notifications/scenes/energy (stretch, after Phase 7 core)
