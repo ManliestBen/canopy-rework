@@ -161,6 +161,32 @@ Then restart Canopy (`sudo systemctl restart canopy`, or just re-run
 Until Cloudinary is connected, the slideshow uses built-in starter
 images so sleep mode still works.
 
+## Cloud backup (MongoDB)
+
+Optional. When configured, Canopy saves a **full snapshot of its database**
+(everything — calendars, chores, star balances, lists, meals, announcements,
+settings, members) to MongoDB **once a day automatically**, and whenever you
+tap **Back up now** in Settings. SQLite on the panel stays the source of
+truth; the cloud copy is for disaster recovery, and Settings can **restore
+the latest snapshot** if the Pi's storage ever dies.
+
+1. Create a MongoDB database — e.g. a free [MongoDB Atlas](https://www.mongodb.com/atlas)
+   cluster. Create a database user, allow your network, and copy the
+   **connection string** (include a database name, e.g. `…/canopy`).
+2. In `.env`:
+   ```
+   MONGODB_URI=mongodb+srv://user:pass@cluster.example.mongodb.net/canopy?retryWrites=true&w=majority
+   ```
+3. Restart Canopy. Confirm in **Settings → Backup** — the "Cloud backup"
+   panel shows it's connected and lets you back up now or restore.
+
+Notes:
+- Snapshots rotate automatically (the most recent 14 are kept).
+- The snapshot contains the family PIN hash (it's a full DB copy), so treat
+  the MongoDB database as private — don't share the connection string.
+- If MongoDB is unreachable, the panel keeps working normally; the daily
+  backup simply retries the next day, and "Back up now" reports the error.
+
 ## Checking status
 
 ```bash

@@ -6,6 +6,7 @@ import { startBackgroundRefresh } from './services/eventCache.js';
 import { initGoogle } from './services/googleCalendar.js';
 import { reportIntegration } from './routes/health.js';
 import { startDigestScheduler } from './services/digest.js';
+import { startCloudBackupScheduler } from './services/cloudBackup.js';
 import { gmailConfigured, initGmail } from './services/gmail.js';
 import { googleStatus } from './services/googleCalendar.js';
 import { startPhotosRefresh } from './services/photos.js';
@@ -18,6 +19,7 @@ startBackgroundRefresh();
 startWeatherRefresh();
 startPhotosRefresh();
 startDigestScheduler();
+startCloudBackupScheduler();
 
 // Reflect real init results in /api/health.
 const gs = googleStatus();

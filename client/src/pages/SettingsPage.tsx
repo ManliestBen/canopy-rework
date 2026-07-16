@@ -8,7 +8,7 @@ import {
 } from '@canopy/shared';
 import { useState } from 'react';
 import { useEmailStatus } from '../features/announcements/api';
-import { BackupSettings } from '../components/BackupSettings';
+import { BackupSettings, CloudBackupSettings } from '../components/BackupSettings';
 import { PinSettings } from '../components/PinSettings';
 import { UserManager } from '../components/UserManager';
 import { apiSend } from '../lib/api';
@@ -163,6 +163,7 @@ export function SettingsPage() {
       <section className="panel" style={{ padding: 20 }}>
         <h2 style={{ marginTop: 0 }}>Backup</h2>
         <BackupSettings />
+        <CloudBackupSettings />
       </section>
     </div>
   );

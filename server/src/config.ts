@@ -40,4 +40,9 @@ export const config = {
   cloudinary: {
     url: process.env.CLOUDINARY_URL ?? null,
   },
+  cloudBackup: {
+    // Optional MongoDB connection string. When set, Canopy backs up a full
+    // snapshot of its SQLite database to the cloud (daily + on demand).
+    mongodbUri: process.env.MONGODB_URI ?? null,
+  },
 } as const;

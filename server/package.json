@@ -19,6 +19,7 @@
     "express-rate-limit": "^7.5.0",
     "googleapis": "^144.0.0",
     "helmet": "^8.0.0",
+    "mongodb": "^7.5.0",
     "node-ical": "^0.20.1",
     "pino": "^9.5.0",
     "pino-http": "^10.3.0",

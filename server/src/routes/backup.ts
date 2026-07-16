@@ -1,8 +1,14 @@
 import { Router } from 'express';
 import { BackupSchema, type Backup } from '@canopy/shared';
 import { getDb } from '../db/index.js';
+import { wrap } from '../lib/asyncRoute.js';
 import { getSettings, patchSettings } from '../services/settings.js';
 import { listUsers, restoreUsers } from '../services/users.js';
+import {
+  cloudBackupStatus,
+  restoreFromCloud,
+  runCloudBackup,
+} from '../services/cloudBackup.js';
 
 export const backupRouter = Router();
 
@@ -36,3 +42,31 @@ backupRouter.post('/restore', (req, res) => {
   })();
   res.json({ ok: true, restoredUsers: backup.users.length });
 });
+
+// ---- Cloud backup (full database snapshot to MongoDB) ------------------
+
+/** Status: is cloud backup configured, and when did it last run. */
+backupRouter.get(
+  '/cloud',
+  wrap(async (_req, res) => {
+    res.json(await cloudBackupStatus());
+  }),
+);
+
+/** Run a cloud backup now (also invoked automatically every 24h). */
+backupRouter.post(
+  '/cloud',
+  wrap(async (_req, res) => {
+    const meta = await runCloudBackup();
+    res.json({ ok: true, createdAt: meta.createdAt, size: meta.size });
+  }),
+);
+
+/** Restore the database from the most recent cloud snapshot (destructive). */
+backupRouter.post(
+  '/cloud/restore',
+  wrap(async (_req, res) => {
+    const { restoredFrom } = await restoreFromCloud();
+    res.json({ ok: true, restoredFrom });
+  }),
+);
