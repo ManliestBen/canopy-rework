@@ -1,5 +1,4 @@
 import {
-  DEFAULT_SETTINGS,
   SettingsPatchSchema,
   SettingsSchema,
   type Settings,

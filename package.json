@@ -17,10 +17,15 @@
     "start": "npm run start --workspace server",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint .",
     "migrate": "npm run migrate --workspace server",
     "e2e": "playwright test"
   },
   "devDependencies": {
-    "@playwright/test": "^1.61.1"
+    "@playwright/test": "^1.61.1",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^17.7.0",
+    "typescript-eslint": "^8.64.0"
   }
 }
