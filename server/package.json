@@ -13,11 +13,12 @@
   },
   "dependencies": {
     "@canopy/shared": "*",
+    "@googleapis/calendar": "^15.0.0",
+    "@googleapis/gmail": "^17.0.0",
     "better-sqlite3": "^12.2.0",
     "cookie-parser": "^1.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
-    "googleapis": "^144.0.0",
     "helmet": "^8.0.0",
     "mongodb": "^7.5.0",
     "node-ical": "^0.20.1",

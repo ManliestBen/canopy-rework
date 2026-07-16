@@ -1,4 +1,4 @@
-import { google, type gmail_v1 } from 'googleapis';
+import { auth as gmailAuth, gmail, type gmail_v1 } from '@googleapis/gmail';
 import { config } from '../config.js';
 import { logger } from '../logger.js';
 
@@ -12,9 +12,9 @@ let client: gmail_v1.Gmail | null = null;
 export function initGmail(): void {
   const { oauthClientId, oauthClientSecret, oauthRefreshToken } = config.google;
   if (!oauthClientId || !oauthClientSecret || !oauthRefreshToken) return;
-  const oauth2 = new google.auth.OAuth2(oauthClientId, oauthClientSecret);
+  const oauth2 = new gmailAuth.OAuth2(oauthClientId, oauthClientSecret);
   oauth2.setCredentials({ refresh_token: oauthRefreshToken });
-  client = google.gmail({ version: 'v1', auth: oauth2, timeout: 15_000 });
+  client = gmail({ version: 'v1', auth: oauth2, timeout: 15_000 });
   logger.info('Gmail client ready');
 }
 

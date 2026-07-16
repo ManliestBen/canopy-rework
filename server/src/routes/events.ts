@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { DATE_KEY_REGEX, EventInputSchema, type EventInput } from '@canopy/shared';
-import type { calendar_v3 } from 'googleapis';
+import type { calendar_v3 } from '@googleapis/calendar';
 import { wrap } from '../lib/asyncRoute.js';
 import { getCalendar, listCalendars } from '../services/calendars.js';
 import { getEvents, refreshAll, refreshCalendar } from '../services/eventCache.js';

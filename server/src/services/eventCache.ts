@@ -6,7 +6,7 @@ import {
   type CalendarSource,
   type EventsResponse,
 } from '@canopy/shared';
-import type { calendar_v3 } from 'googleapis';
+import type { calendar_v3 } from '@googleapis/calendar';
 import { getDb } from '../db/index.js';
 import { logger } from '../logger.js';
 import { listCalendars } from './calendars.js';

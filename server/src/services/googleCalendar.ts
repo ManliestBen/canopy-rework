@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { google, type calendar_v3 } from 'googleapis';
+import { auth as googleAuth, calendar, type calendar_v3 } from '@googleapis/calendar';
 import { config } from '../config.js';
 import { logger } from '../logger.js';
 
@@ -24,11 +24,11 @@ export function initGoogle(): void {
       client_email?: string;
     };
     serviceAccountEmail = raw.client_email ?? null;
-    const auth = new google.auth.GoogleAuth({
+    const auth = new googleAuth.GoogleAuth({
       keyFile: keyPath,
       scopes: ['https://www.googleapis.com/auth/calendar'],
     });
-    client = google.calendar({ version: 'v3', auth, timeout: TIMEOUT_MS });
+    client = calendar({ version: 'v3', auth, timeout: TIMEOUT_MS });
     logger.info({ serviceAccountEmail }, 'Google Calendar client ready');
   } catch (err) {
     initError = err instanceof Error ? err.message : String(err);
