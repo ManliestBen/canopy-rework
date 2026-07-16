@@ -11,6 +11,9 @@ import {
 import type { z } from 'zod';
 import { getDb } from '../db/index.js';
 
+/** Retain only the most recent N shopping-item history rows (see addItems). */
+const HISTORY_CAP = 1000;
+
 type ListRow = { id: string; title: string; emoji: string };
 type ItemRow = {
   id: string;
@@ -80,11 +83,19 @@ export function addItems(listId: string, texts: string[]): void {
   // History powers the "frequent items" suggestions and survives
   // clear-completed (which deletes the live rows).
   const record = db.prepare('INSERT INTO item_history (text) VALUES (?)');
+  // Bound the table on a device that runs for years — keep the most recent
+  // HISTORY_CAP rows (plenty of signal for frequent-item ranking).
+  const prune = db.prepare(
+    `DELETE FROM item_history WHERE rowid NOT IN (
+       SELECT rowid FROM item_history ORDER BY rowid DESC LIMIT ?
+     )`,
+  );
   db.transaction(() => {
     for (const text of texts) {
       insert.run(crypto.randomUUID(), listId, text);
       record.run(text);
     }
+    prune.run(HISTORY_CAP);
   })();
 }
 

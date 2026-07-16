@@ -77,7 +77,8 @@ export async function refreshPhotos(): Promise<void> {
       .run(CACHE_KEY, JSON.stringify(current), current.fetchedAt);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    current = { ...current, error: message };
+    // Generic message to clients; raw upstream/provider detail to the log.
+    current = { ...current, error: 'Could not load photos' };
     logger.warn({ err: message }, 'photo refresh failed');
   }
 }

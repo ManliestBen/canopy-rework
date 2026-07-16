@@ -28,17 +28,23 @@ export function Slideshow({ onWake, dim }: { onWake: () => void; dim?: boolean }
   // Crossfade: toggle visibility, then advance while hidden.
   useEffect(() => {
     if (dim || photos.length < 2) return;
+    let fade: ReturnType<typeof setTimeout>;
     const interval = setInterval(
       () => {
         setVisible(false);
-        setTimeout(() => {
+        fade = setTimeout(() => {
           setIndex((i) => (i + 1) % photos.length);
           setVisible(true);
         }, 900);
       },
       Math.max(5, settings.slideshowIntervalSeconds) * 1000,
     );
-    return () => clearInterval(interval);
+    // Clear BOTH timers — a pending crossfade must not fire after the effect
+    // is torn down (dim/interval change or unmount) on this 24/7 panel.
+    return () => {
+      clearInterval(interval);
+      clearTimeout(fade);
+    };
   }, [photos.length, settings.slideshowIntervalSeconds, dim]);
 
   const nextPhoto = photos[(index + 1) % photos.length];

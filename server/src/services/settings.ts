@@ -5,7 +5,9 @@ import {
   type Settings,
   type SettingsPatch,
 } from '@canopy/shared';
+import type { ZodTypeAny } from 'zod';
 import { getDb } from '../db/index.js';
+import { logger } from '../logger.js';
 
 /**
  * Settings live in a key/value table; each value is JSON. Reads apply
@@ -25,7 +27,20 @@ export function getSettings(): Settings {
     }
   }
   const parsed = SettingsSchema.safeParse(raw);
-  return parsed.success ? parsed.data : DEFAULT_SETTINGS;
+  if (parsed.success) return parsed.data;
+  // A single out-of-range stored value must NOT reset every setting to
+  // defaults (that would silently wipe family name, sleep window, digest
+  // recipients…). Keep each field that validates, fall back per-key to its
+  // default, and log which key was dropped.
+  const shape = SettingsSchema.shape as Record<string, ZodTypeAny>;
+  const repaired: Record<string, unknown> = {};
+  for (const key of Object.keys(shape)) {
+    if (!(key in raw)) continue;
+    const field = shape[key]!.safeParse(raw[key]);
+    if (field.success) repaired[key] = field.data;
+    else logger.warn({ key }, 'ignoring an invalid stored setting; using its default');
+  }
+  return SettingsSchema.parse(repaired);
 }
 
 export function patchSettings(patch: SettingsPatch): Settings {

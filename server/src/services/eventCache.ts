@@ -237,10 +237,11 @@ export function getEvents(fromKey: string, toKey: string): EventsResponse {
     }
   }
 
-  events.sort((a, b) =>
-    a.allDay !== b.allDay && a.startKey === b.startKey
-      ? Number(b.allDay) - Number(a.allDay)
-      : a.start.localeCompare(b.start),
-  );
+  // Total order (transitive): by day, then all-day before timed, then start.
+  events.sort((a, b) => {
+    if (a.startKey !== b.startKey) return a.startKey < b.startKey ? -1 : 1;
+    if (a.allDay !== b.allDay) return Number(b.allDay) - Number(a.allDay);
+    return a.start.localeCompare(b.start);
+  });
   return { events, calendars };
 }
