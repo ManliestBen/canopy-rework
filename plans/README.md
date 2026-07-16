@@ -52,6 +52,32 @@ Suggested order: **001 → 002 → 003 → 004 → 006 → 005** (correctness an
 security first; perf last). 005/006 can run in parallel with the auth pair if
 different executors pick them up.
 
+## Second implementation pass (2026-07-15, same branch)
+
+After the six plans landed, the owner asked to build out MongoDB cloud backup
+and to clear the high-value backlog. Done on `feature/canopy-improvements`:
+
+- **MongoDB cloud backup** (implements DIR-06): full DB snapshot to MongoDB,
+  daily auto + manual "Back up now" + restore-latest, in Settings. SQLite
+  stays source of truth; best-effort one-way sink.
+- **DEPS-01 — DONE**: swapped the 116 MB `googleapis` metapackage for scoped
+  `@googleapis/calendar` + `@googleapis/gmail` (6.4 MB).
+- **SEC-05 — DONE**: weather/photos no longer reflect raw upstream errors.
+- **CORRECTNESS-03 — DONE**: Slideshow crossfade timeout cleared on cleanup.
+- **CORRECTNESS-04 — DONE**: one bad stored setting no longer resets all.
+- **CORRECTNESS-06 — DONE**: event sort comparator made a total order.
+- **DEBT-03 — DONE**: `item_history` capped at 1000 rows.
+- **DX-01 / DOCS-01 — DONE**: ESLint flat config + `npm run lint` in CI.
+- **DX-02 — DONE**: `CLAUDE.md` added.
+- **DX-03 — PARTIAL**: Playwright e2e now runs in CI; coverage tooling not
+  added (low leverage — left for later).
+
+**Deliberately still deferred** (risky/large, not done unprompted): DEPS-02
+(precompile server vs tsx), DEPS-03 (Express 5 / zod 4 majors), DEBT-01/02
+(CRUD + cache-lifecycle refactors), CORRECTNESS-07 (uncertain), PERF-02
+(code-splitting), and the larger TEST backlog beyond tests added alongside the
+changes above.
+
 ## Findings considered — backlog (grounded, not yet planned)
 
 These are real, vetted findings that didn't make the top-6 cut. Promote to a

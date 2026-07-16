@@ -24,10 +24,12 @@ the start. See [PLAN.md](PLAN.md) for the full architecture rationale.
   calendar day headers too
 - **Announcements** — sticky notes on the main screen; optional email
 - **Email** — morning agenda digest via the Canopy Gmail identity
+- **Backup** — config export/import (JSON), plus optional **MongoDB cloud
+  backup**: a full database snapshot saved daily and on demand, restorable
+  from Settings
 - **Extras** — countdown timer, on-panel event reminders, PIN-guarded
   remote access from phones, settings lock, offline-tolerant caching,
-  config backup/restore, 7 themes (Skylight default) with adjustable
-  glass effect
+  7 themes (Skylight default) with adjustable glass effect
 
 ## Docs
 

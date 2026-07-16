@@ -704,6 +704,13 @@ change:
   anywhere.
 - **Restore from file…** — pick a backup file to load those settings and people
   back in.
+- **Cloud backup** (only appears if a grown-up connected it) — saves a **full
+  copy of everything** (chores, stars, lists, meals, calendars, notes…) to the
+  cloud **automatically every day**. You'll see when the last backup happened.
+  - **Back up now** makes an extra copy this instant.
+  - **Restore from cloud…** brings back the most recent copy if the panel ever
+    loses its data — it asks you to confirm first, because it replaces
+    everything currently on the panel.
 
 ### Calendars
 
